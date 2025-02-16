@@ -1,0 +1,252 @@
+if game.CoreGui:FindFirstChild("CustomGUI") then
+    game.CoreGui.CustomGUI:Destroy()
+end
+
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+local stats = lp:FindFirstChild("PlayerStats")
+
+local styles = {
+    "Isagi", "Chigiri", "Bachira", "Otoya", "Gagamaru", "Reo",
+    "Karasu", "Nagi", "Sae", "Rin", "Shidou", "Kunigami", "Aiku",
+    "Yukimiya", "Hiori", " King"
+}
+
+local flows = {
+    "Snake", "Prodigy", "Awakened Genius", "Dribbler", "Crow",
+    "Trap", "Demon Wing", "Wild Card", "Chameleon", "Monster",
+    "Gale Burst", "Genius", "Ice", "Lightning", "Puzzle"
+}
+
+local function autocomplete(input, list)
+    input = input:lower()
+    for _, name in ipairs(list) do
+        if name:lower():sub(1, #input) == input then
+            return name
+        end
+    end
+    return input
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "CustomGUI"
+gui.Parent = game.CoreGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundTransparency = 0.3
+frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+frame.Parent = gui
+
+-- Adding UICorner for rounded corners
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0, 12)
+frameCorner.Parent = frame
+
+-- Creating the animated RGB gradient background
+local uiGradient = Instance.new("UIGradient")
+uiGradient.Rotation = 45
+uiGradient.Parent = frame
+
+local textBox1 = Instance.new("TextBox")
+textBox1.Size = UDim2.new(0, 280, 0, 30)
+textBox1.Position = UDim2.new(0, 10, 0, 10)
+textBox1.PlaceholderText = "Enter Style Name"
+textBox1.Parent = frame
+
+-- Rounded corners for TextBox
+local textBoxCorner1 = Instance.new("UICorner")
+textBoxCorner1.CornerRadius = UDim.new(0, 12)
+textBoxCorner1.Parent = textBox1
+
+local button1 = Instance.new("TextButton")
+button1.Size = UDim2.new(0, 280, 0, 30)
+button1.Position = UDim2.new(0, 10, 0, 50)
+button1.Text = "Set Style"
+button1.Parent = frame
+
+-- Rounded corners for Button
+local buttonCorner1 = Instance.new("UICorner")
+buttonCorner1.CornerRadius = UDim.new(0, 12)
+buttonCorner1.Parent = button1
+
+local textBox2 = Instance.new("TextBox")
+textBox2.Size = UDim2.new(0, 280, 0, 30)
+textBox2.Position = UDim2.new(0, 10, 0, 90)
+textBox2.PlaceholderText = "Enter Flow Name"
+textBox2.Parent = frame
+
+-- Rounded corners for TextBox2
+local textBoxCorner2 = Instance.new("UICorner")
+textBoxCorner2.CornerRadius = UDim.new(0, 12)
+textBoxCorner2.Parent = textBox2
+
+local button2 = Instance.new("TextButton")
+button2.Size = UDim2.new(0, 280, 0, 30)
+button2.Position = UDim2.new(0, 10, 0, 130)
+button2.Text = "Set Flow"
+button2.Parent = frame
+
+-- Rounded corners for Button2
+local buttonCorner2 = Instance.new("UICorner")
+buttonCorner2.CornerRadius = UDim.new(0, 12)
+buttonCorner2.Parent = button2
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 100, 0, 30)
+toggleButton.Position = UDim2.new(0.5, -50, 0, -40)
+toggleButton.Text = "Toggle GUI"
+toggleButton.BackgroundTransparency = 0.6
+toggleButton.Parent = gui
+
+-- Rounded corners for Toggle Button
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(0, 12)
+toggleCorner.Parent = toggleButton
+
+-- New button to show all styles and flows, positioned to the right of the toggle button
+local showAllButton = Instance.new("TextButton")
+showAllButton.Size = UDim2.new(0, 100, 0, 30)
+showAllButton.Position = UDim2.new(0.5, 60, 0, -40)  -- Positioned to the right of the toggle button
+showAllButton.Text = "Show All"
+showAllButton.BackgroundTransparency = 0.6
+showAllButton.Parent = gui
+
+-- Rounded corners for Show All Button
+local showAllCorner = Instance.new("UICorner")
+showAllCorner.CornerRadius = UDim.new(0, 12)
+showAllCorner.Parent = showAllButton
+
+-- Creating the GUI that shows styles and flows
+local allInfoGui = Instance.new("Frame")
+allInfoGui.Size = UDim2.new(0, 400, 0, 500)
+allInfoGui.Position = UDim2.new(0.5, -200, 0.5, -250)
+allInfoGui.BackgroundTransparency = 0.3
+allInfoGui.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+allInfoGui.Visible = false
+allInfoGui.Parent = gui
+
+-- Adding UICorner for rounded corners to the all info GUI
+local allInfoCorner = Instance.new("UICorner")
+allInfoCorner.CornerRadius = UDim.new(0, 12)
+allInfoCorner.Parent = allInfoGui
+
+-- Creating the scrolling frame for styles (Page 1)
+local scrollFrame1 = Instance.new("ScrollingFrame")
+scrollFrame1.Size = UDim2.new(1, 0, 1, 0)
+scrollFrame1.Position = UDim2.new(0, 0, 0, 0)
+scrollFrame1.BackgroundTransparency = 1
+scrollFrame1.ScrollBarThickness = 10
+scrollFrame1.Parent = allInfoGui
+
+local layout1 = Instance.new("UIListLayout")
+layout1.Parent = scrollFrame1
+layout1.Padding = UDim.new(0, 5)
+
+-- Creating the scrolling frame for flows (Page 2)
+local scrollFrame2 = Instance.new("ScrollingFrame")
+scrollFrame2.Size = UDim2.new(1, 0, 1, 0)
+scrollFrame2.Position = UDim2.new(0, 0, 0, 0)
+scrollFrame2.BackgroundTransparency = 1
+scrollFrame2.ScrollBarThickness = 10
+scrollFrame2.Visible = false
+scrollFrame2.Parent = allInfoGui
+
+local layout2 = Instance.new("UIListLayout")
+layout2.Parent = scrollFrame2
+layout2.Padding = UDim.new(0, 5)
+
+-- Adding the buttons for styles in scrollFrame1
+for i, style in ipairs(styles) do
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0, 380, 0, 30)
+    button.Text = style
+    button.Parent = scrollFrame1
+
+    button.MouseButton1Click:Connect(function()
+        if stats and stats:FindFirstChild("Style") then
+            stats.Style.Value = style
+            allInfoGui.Visible = false -- Hide the "All Info" GUI after selecting a style
+        end
+    end)
+end
+
+-- Adding the buttons for flows in scrollFrame2
+for i, flow in ipairs(flows) do
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0, 380, 0, 30)
+    button.Text = flow
+    button.Parent = scrollFrame2
+
+    button.MouseButton1Click:Connect(function()
+        if stats and stats:FindFirstChild("Flow") then
+            stats.Flow.Value = flow
+            allInfoGui.Visible = false -- Hide the "All Info" GUI after selecting a flow
+        end
+    end)
+end
+
+-- Create a close button for the "All Info" GUI
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -40, 0, 10)
+closeButton.Text = "X"
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Parent = allInfoGui
+
+-- Function to close the "All Info" GUI
+closeButton.MouseButton1Click:Connect(function()
+    allInfoGui.Visible = false
+end)
+
+-- Show the "All Info" GUI when the Show All button is pressed
+showAllButton.MouseButton1Click:Connect(function()
+    allInfoGui.Visible = true
+    scrollFrame1.Visible = true
+    scrollFrame2.Visible = false
+end)
+
+-- Add a toggle between page1 and page2
+local togglePageButton = Instance.new("TextButton")
+togglePageButton.Size = UDim2.new(0, 100, 0, 30)
+togglePageButton.Position = UDim2.new(1, -140, 0, 10)
+togglePageButton.Text = "Toggle Pages"
+togglePageButton.BackgroundTransparency = 0.6
+togglePageButton.Parent = allInfoGui
+
+togglePageButton.MouseButton1Click:Connect(function()
+    scrollFrame1.Visible = not scrollFrame1.Visible
+    scrollFrame2.Visible = not scrollFrame2.Visible
+end)
+
+button1.MouseButton1Click:Connect(function()
+    if stats and stats:FindFirstChild("Style") then
+        local inputText = textBox1.Text
+        local autoCompleteName = autocomplete(inputText, styles)
+        stats.Style.Value = autoCompleteName
+    end
+end)
+
+button2.MouseButton1Click:Connect(function()
+    if stats and stats:FindFirstChild("Flow") then
+        local inputText = textBox2.Text
+        local autoCompleteName = autocomplete(inputText, flows)
+        stats.Flow.Value = autoCompleteName
+    end
+end)
+
+toggleButton.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
+end)
+
+task.spawn(function()
+    while task.wait() do
+        local t = tick() % 5
+        uiGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromHSV(t / 5, 1, 1)),
+            ColorSequenceKeypoint.new(1, Color3.fromHSV((t + 2) % 5 / 5, 1, 1))
+        }
+    end
+end)
