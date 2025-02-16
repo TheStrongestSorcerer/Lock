@@ -9,7 +9,7 @@ local stats = lp:FindFirstChild("PlayerStats")
 local styles = {
     "Isagi", "Chigiri", "Bachira", "Otoya", "Gagamaru", "Reo",
     "Karasu", "Nagi", "Sae", "Rin", "Shidou", "Kunigami", "Aiku",
-    "Yukimiya", "Hiori", " King"
+    "Yukimiya", "Hiori", "King"
 }
 
 local flows = {
